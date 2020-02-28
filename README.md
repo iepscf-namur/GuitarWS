@@ -1,2 +1,0 @@
-# GuitarWS
-GuitarWS Services
