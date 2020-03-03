@@ -3,7 +3,7 @@ package org.guitar.DAO.Utils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
+//import java.util.Date;
 import java.util.Properties;
 
 public class GetPropertyValues {
@@ -21,8 +21,9 @@ public class GetPropertyValues {
 	public void getPropValues() throws IOException {
 
 		try {
+			
 			Properties prop = new Properties();
-			String propFileName = "/resources/config.properties";
+			String propFileName = "config.properties";
 
 			inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
 
@@ -32,7 +33,8 @@ public class GetPropertyValues {
 				throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
 			}
 
-			Date time = new Date(System.currentTimeMillis());
+			// Not currently use - kept for future version
+			// Date time = new Date(System.currentTimeMillis());
 
 			// get the property value
 			this.driverClassName = prop.getProperty("db.driverClassName");
@@ -42,7 +44,7 @@ public class GetPropertyValues {
 			this.devSchema = prop.getProperty("db.devSchema");
 			this.userSchema = prop.getProperty("db.userSchema");
 
-			this.result = "driverClassName = " + driverClassName + ", " + url + ", " + username + ", " + password;
+			this.result = "driverClassName = " + driverClassName + " , " + url + " , " + username + " , " + password;
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
 		} finally {

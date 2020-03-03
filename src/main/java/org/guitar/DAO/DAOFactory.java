@@ -3,12 +3,10 @@ package org.guitar.DAO;
 import org.guitar.DAO.Utils.GetPropertyValues;
 
 import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-//If any instances of DAOFactory already exist, we will create and return one
-//This class can open a connection to the Database
 
 public class DAOFactory {
 
@@ -35,27 +33,43 @@ public class DAOFactory {
 
         try
         {
-            //https://jdbc.postgresql.org/documentation/81/load.html
-            //Before connecting to the DB, we need to load the driver
             //Loading the driver
-            //returns org.postgresql.Driver, so basically a new instance of that class
             Class.forName(propertyValues.getDriverClassName());
         }
         catch (ClassNotFoundException e){
         }
 
         if(DAOFactory._instance == null) {
-            DAOFactory._instance = new DAOFactory("jdbc:postgresql://"+ propertyValues.getUrl() + schema, propertyValues.getUsername(), propertyValues.getPassword());
+        	System.out.println(propertyValues.getUrl() + propertyValues.getUserSchema() +
+					"?" + "user=" + propertyValues.getUsername() + "&password=" + propertyValues.getPassword());
+//			DAOFactory._instance =
+//					new DAOFactory(propertyValues.getUrl() + propertyValues.getUserSchema() +
+//							"?" + "user=" + propertyValues.getUsername() + "&password=" + propertyValues.getPassword(),
+//							propertyValues.getUsername(),propertyValues.getPassword());
+			DAOFactory._instance =
+					new DAOFactory(propertyValues.getUrl() + propertyValues.getUserSchema()
+					, propertyValues.getUsername(),propertyValues.getPassword());
+
         } else {
-            DAOFactory._instance.url = "jdbc:postgresql://"+ propertyValues.getUrl() + schema;
+        	DAOFactory._instance.url = propertyValues.getUrl() + propertyValues.getUserSchema();
         }
 
         return DAOFactory._instance;
     }
 
     public Connection getConnection() throws SQLException {
-        //System.out.println(url);
-        return DriverManager.getConnection(url,username,password);
+    	try {
+    	
+    	// ICICICICICICICI
+    	System.out.println("url, username, password: " + url + " - " + username + " - " + password);
+
+    	return DriverManager.getConnection("jdbc:mysql://localhost:3306/guitar", "root", "cefalu");
+    	
+    	//return DriverManager.getConnection(url, username, password);
+
+    	} catch (SQLException e) {
+    		return null;
+        }
     }
 
     public IUserDAO getUserDAO() { return new UserDAOImpl(this); }

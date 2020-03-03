@@ -12,9 +12,11 @@
 	<% String myTitle = (String) request.getAttribute("title"); out.println( myTitle); %>
 	</p>
     <h3>/users</h3>
+    <p>GET /users <a href="/users/*">Search all users and return a Json array string</a></p>
+
  <!--  <p>POST /users => <a href="/home">Requires JSON body with user login, password, salt fields</a></p>
  -->   
- <!--  <p>GET /users => <a href="/users">Retrieves all users and returns a Json Array string</a></p>
+ <!--
     <p>GET /users/{id} => <a href="/users/1">Retrieves the requested user as a Json String</a></p>
     <p>PUT /users/{id} => <a href="/users/1">Update the user specified, requires a JSON body with the field or fields to be updated</a></p>
     <p>DELETE /users/{id} => <a href="/users/1">Deletes the requested user</a></p>
