@@ -11,11 +11,13 @@ import java.sql.SQLException;
 public class DAOFactory {
 
     private static DAOFactory _instance = null;
+    private String driverClassName;
     private String url;
     private String username;
     private String password;
 
-    private DAOFactory(String url, String username, String password){
+    private DAOFactory(String driverClassName, String url, String username, String password) {
+    	this.driverClassName = driverClassName;
         this.url = url;
         this.username = username;
         this.password = password;
@@ -33,21 +35,15 @@ public class DAOFactory {
 
         try
         {
-            //Loading the driver
+            // Loading the driver
             Class.forName(propertyValues.getDriverClassName());
         }
         catch (ClassNotFoundException e){
         }
 
         if(DAOFactory._instance == null) {
-        	System.out.println(propertyValues.getUrl() + propertyValues.getUserSchema() +
-					"?" + "user=" + propertyValues.getUsername() + "&password=" + propertyValues.getPassword());
-//			DAOFactory._instance =
-//					new DAOFactory(propertyValues.getUrl() + propertyValues.getUserSchema() +
-//							"?" + "user=" + propertyValues.getUsername() + "&password=" + propertyValues.getPassword(),
-//							propertyValues.getUsername(),propertyValues.getPassword());
 			DAOFactory._instance =
-					new DAOFactory(propertyValues.getUrl() + propertyValues.getUserSchema()
+					new DAOFactory(propertyValues.getDriverClassName(), propertyValues.getUrl() + propertyValues.getUserSchema()
 					, propertyValues.getUsername(),propertyValues.getPassword());
 
         } else {
@@ -59,15 +55,12 @@ public class DAOFactory {
 
     public Connection getConnection() throws SQLException {
     	try {
-    	
-    	// ICICICICICICICI
-    	System.out.println("url, username, password: " + url + " - " + username + " - " + password);
+    		// chargement de la classe par son nom
+    		Class c = Class.forName(driverClassName);
 
-    	return DriverManager.getConnection("jdbc:mysql://localhost:3306/guitar", "root", "cefalu");
+    		return DriverManager.getConnection(url, username, password);
     	
-    	//return DriverManager.getConnection(url, username, password);
-
-    	} catch (SQLException e) {
+    	} catch (SQLException | ClassNotFoundException e) {
     		return null;
         }
     }

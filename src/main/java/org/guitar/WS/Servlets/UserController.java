@@ -6,8 +6,8 @@ import org.guitar.WS.Errors.JsonErrorBuilder;
 import org.guitar.WS.Utils.ServletUtils;
 import org.guitar.WS.Services.UserServiceImpl;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +29,7 @@ public class UserController extends HttpServlet {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
         // Read the body content and send it to UserService for user creation
             try {
-                //Will transform the Json String from the body content into a Json object
+                // Transform the Json String from the body content into a Json object
                 JsonObject user = ServletUtils.readBody(request);
                 jsonResponse = UserServiceImpl.getInstance().addUserJson(user);
 
@@ -54,18 +54,48 @@ public class UserController extends HttpServlet {
             }
 
             // If URL is different from /users
+            } else if (request.getPathInfo().equals("/auth") || request.getPathInfo().equals("/auth/")) {
+            	try {
+                    // Transform the Json String from the body content into a Json object
+            		JsonObject user = ServletUtils.readBody(request);
+                    String login = (String) user.get("login").toString();
+                    String encodedPassword = (String) user.get("password").toString();
+                    
+            	    jsonResponse = UserServiceImpl.getInstance().authUsersJson((String)login, (String)encodedPassword);
+                   
+            	    if (jsonResponse == null) {
+                        //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
+                        jsonResponse = JsonErrorBuilder.getJsonObject(500, "User not validated");
+                        response.setStatus(jsonResponse.get("code").getAsInt());
+                        //response.getWriter().write(jsonResponse.toString());
+
+                    } else {
+                        //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS
+                        jsonResponse = JsonErrorBuilder.getJsonObject(201, "User " + jsonResponse.get("login").getAsString() + " has been sucesfully validated");
+                        response.setStatus(jsonResponse.get("code").getAsInt());
+                        //response.getWriter().write(jsonResponse.toString());
+                    }
+
+            	}
+            	catch(Exception e) {
+            		jsonResponse = JsonErrorBuilder.getJsonObject(500,
+                        "An error occurred while processing the data provided (POST UserController)");
+            		response.setStatus(jsonResponse.get("code").getAsInt());
+            		e.printStackTrace();
+            	} 	
             } else {
             jsonResponse = JsonErrorBuilder.getJsonObject(404,
                     request.getServletPath() + request.getPathInfo() + " is not a supported POST url");
             response.setStatus(jsonResponse.get("code").getAsInt());
             //response.getWriter().write(jsonResponse.toString());
-        }
+            }
 
         response.getWriter().write(jsonResponse.toString());
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
     	// We need to set Response Header's Content-Type and CharacterEncoding before sending it to the client
         ServletUtils.setResponseSettings(response);
 
@@ -79,8 +109,9 @@ public class UserController extends HttpServlet {
             // If some parameters are given (request URL is /users{login})
         } else if(request.getPathInfo().substring(1).length()> 0) {
             JsonObject jsonResponse =  null;
-            // Remove "/" at the beginning of the string
-            String login = request.getPathInfo().substring(1);
+            // Remove "/" at the beginning of the string 
+            String login = "";
+            login = request.getPathInfo().substring(1);
             
             jsonResponse = UserServiceImpl.getInstance().getUserJson(login);
 
@@ -144,7 +175,6 @@ public class UserController extends HttpServlet {
         JsonObject jsonResponse = null;
 
         // If some parameters are given (request URL is /users{login})
-
         if(request.getPathInfo().substring(1).length()> 0) {
             // Remove "/" at the beginning of the string
             String login = request.getPathInfo().substring(1);
@@ -154,8 +184,6 @@ public class UserController extends HttpServlet {
                 user.addProperty("Oldlogin", login);
                 jsonResponse = UserServiceImpl.getInstance().updateUserJson(user);
 
-                System.out.println(user);
-                System.out.println(jsonResponse);
                 if (jsonResponse == null) {
                     //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
                     jsonResponse = JsonErrorBuilder.getJsonObject(500, "User not updated");
@@ -177,8 +205,7 @@ public class UserController extends HttpServlet {
             }
 
         } else {
-            jsonResponse = JsonErrorBuilder.getJsonObject(
-                    404,
+            jsonResponse = JsonErrorBuilder.getJsonObject(404,
                     request.getServletPath() +
                             (request.getPathInfo() == null ? "" : request.getPathInfo()) +
                             " is not a supported PUT url");

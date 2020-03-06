@@ -12,12 +12,12 @@ public class UserDAOImpl implements IUserDAO {
 	private DAOFactory daoFactory;
     private Connection connexion;
 
-    private static final String DELETE = "DELETE FROM \"Users\" WHERE \"login\" =?";
-    private static final String FIND_BY_LOGIN = "SELECT * FROM \"Users\" WHERE \"login\" = ?";
-    private static final String FIND_ALL = "SELECT * FROM \"Users\" ORDER BY \"login\"";
+    private static final String DELETE = "delete from users where login = ";
+    private static final String FIND_BY_LOGIN = "select * from users where login like ";
+    private static final String FIND_ALL = "select * from users order by login";
+    private static final String INSERT = "insert into users (login, username, idRoleUser, password, Salt) values (";
+    private static final String UPDATE = "update users set ";
     //private static final String AUTH_USER = "SELECT * FROM \"Users\" WHERE \"login\" = ? AND \"Password\" = ?";
-    private static final String INSERT = "INSERT INTO \"Users\" (\"login\",\"password\",\"userName\",\"idRoleUser\",\"salt\") VALUES (?,?,?,?,?)";
-    private static final String UPDATE = "UPDATE \"Users\" SET \"login\"=?, \"password\"=?, \"userName\"=?, \"idRoleUser\"=?, \"salt\"=? WHERE \"login\"=?";
 
     public UserDAOImpl(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
@@ -31,23 +31,19 @@ public class UserDAOImpl implements IUserDAO {
         PasswordHashing passwordHashing = new PasswordHashing();
         User userToAdd = user;
 
-        String saltedPassword = passwordHashing.salting(userToAdd.getPassword());
-        String salt = passwordHashing.getSalt(saltedPassword);
-
-        userToAdd.setPassword(passwordHashing.generateHash(saltedPassword));
-        userToAdd.setSalt(salt);
-
-        System.out.println("MON SEL EST" + salt);
+        String encodedPassword = passwordHashing.passwordEncoded(userToAdd.getPassword());
+        userToAdd.setPassword(encodedPassword);
+        userToAdd.setSalt(encodedPassword);
 
         try{
             connexion = daoFactory.getConnection();
-            PreparedStatement preparedStatement = connexion.prepareStatement(INSERT);
-            preparedStatement.setString(1, userToAdd.getLogin());
-            preparedStatement.setString(2, userToAdd.getPassword());
-            preparedStatement.setString(3, userToAdd.getUserName());
-            preparedStatement.setInt(4, userToAdd.getIdRoleUser());
-            preparedStatement.setString(5, userToAdd.getSalt());
-
+            PreparedStatement preparedStatement = connexion.prepareStatement(INSERT + 
+            	  "\"" + userToAdd.getLogin() + "\","
+            	+ "\"" + userToAdd.getUserName() + "\","
+            	+ userToAdd.getIdRoleUser() + ","            	
+            	+ "\"" + userToAdd.getPassword() + "\","
+            	+ "\"" + userToAdd.getSalt() + "\")");
+            
             if(preparedStatement.executeUpdate() > 0){
                 lastInsertUser = userToAdd;
             }
@@ -67,20 +63,18 @@ public class UserDAOImpl implements IUserDAO {
             PasswordHashing passwordHashing = new PasswordHashing();
             User userToAdd = user;
 
-            String saltedPassword = passwordHashing.salting(userToAdd.getPassword());
-            String salt = passwordHashing.getSalt(saltedPassword);
-
-            userToAdd.setPassword(passwordHashing.generateHash(saltedPassword));
-            userToAdd.setSalt(salt);
+            String encodedPassword = passwordHashing.passwordEncoded(userToAdd.getPassword());
+            userToAdd.setPassword(encodedPassword);
+            userToAdd.setSalt(encodedPassword);
 
             connexion = daoFactory.getConnection();
-            PreparedStatement preparedStatement = connexion.prepareStatement(UPDATE);
-            preparedStatement.setString(1, userToAdd.getLogin());
-            preparedStatement.setString(2, userToAdd.getPassword());
-            preparedStatement.setString(3, userToAdd.getUserName());
-            preparedStatement.setInt(4, userToAdd.getIdRoleUser());
-            preparedStatement.setString(5, userToAdd.getSalt());
-            preparedStatement.setString(6, oldUser);
+            PreparedStatement preparedStatement = connexion.prepareStatement(UPDATE +
+            		"login = " + "\"" + userToAdd.getLogin() + "\", " +
+            		"password = " + "\"" + userToAdd.getPassword() + "\", " +
+            		"userName = " + "\"" + userToAdd.getUserName() + "\", " +
+            		"idRoleUser = " + userToAdd.getIdRoleUser() + ", " +
+            		"Salt = " + "\"" + userToAdd.getSalt() + "\" " +
+            		"where login = " + "\"" + oldUser + "\""); 
 
             if(preparedStatement.executeUpdate() > 0) response = true ;
             preparedStatement.close();
@@ -96,9 +90,7 @@ public class UserDAOImpl implements IUserDAO {
         boolean response = false ;
         try {
             connexion = daoFactory.getConnection();
-            PreparedStatement preparedStatement = connexion.prepareStatement(DELETE);
-            preparedStatement.setString(1, login);
-
+            PreparedStatement preparedStatement = connexion.prepareStatement(DELETE + "\"" + login + "\"");
             if(preparedStatement.executeUpdate() > 0) response = true ;
             preparedStatement.close();
 
@@ -141,8 +133,14 @@ public class UserDAOImpl implements IUserDAO {
 
         try{
             connexion = daoFactory.getConnection();
-            Statement statement = connexion.prepareStatement(FIND_BY_LOGIN);
-            ((PreparedStatement) statement).setString(1, login);
+            if (login.equals("*")) { 
+            	login = "%";
+            }
+//            else { 
+//            	login = ("%" + login + "%");
+//            }
+            	
+            Statement statement = connexion.prepareStatement(FIND_BY_LOGIN + "\"" + login + "\"");
             ResultSet resultSet = ((PreparedStatement) statement).executeQuery();
 
             if(resultSet.next()){

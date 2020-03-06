@@ -7,6 +7,7 @@ import org.guitar.DAO.Utils.GetPropertyValues;
 import org.guitar.WS.Errors.JsonErrorBuilder;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
@@ -73,6 +74,26 @@ public class UserServiceImpl implements IUserServices {
             jsonObj.addProperty("salt", user.getSalt());
         }
         return jsonObj;
+    }
+
+    @Override
+    public JsonObject authUsersJson(String login, String encodedPassword) {
+        DAOFactory daoFactory = DAOFactory.getInstance(propertyValues.getUserSchema());
+        IUserDAO userDAO = daoFactory.getUserDAO();
+
+        User user = userDAO.GetUser(login);
+        JsonObject jsonObj = null;
+
+        if (user != null) {
+            jsonObj = new JsonObject();
+            jsonObj.addProperty("login", user.getLogin());
+            jsonObj.addProperty("password", user.getPassword());
+            jsonObj.addProperty("userName", user.getUserName());
+            jsonObj.addProperty("idRoleUser", user.getIdRoleUser());
+            jsonObj.addProperty("salt", user.getSalt());
+        }
+        return jsonObj;
+    	
     }
 
     @Override
@@ -153,8 +174,7 @@ public class UserServiceImpl implements IUserServices {
 
         if(!isUserValid(jsonObject) && jsonObject.has("Oldlogin")) {
             //FIXME This error will never show up as it will be encapsulated in a Servlet TRY
-            return JsonErrorBuilder.getJsonObject(
-                    400,
+            return JsonErrorBuilder.getJsonObject(400,
                     "required field missing or incorrectly formatted, please check the requirements");
         }
 

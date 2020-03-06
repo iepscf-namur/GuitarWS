@@ -7,7 +7,7 @@ public interface IUserServices {
 
     public JsonObject getUserJson(String login);
     public JsonArray getUsersJson();
-    //public JsonArray getUsersJson(JsonObject params);
+    public JsonObject authUsersJson(String login, String encodedPassword);
     public JsonObject updateUserJson(JsonObject user);
     public JsonObject deleteUserJson(String login);
     public JsonObject addUserJson(JsonObject user);

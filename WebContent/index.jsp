@@ -11,32 +11,21 @@
     <p> Title: 
 	<% String myTitle = (String) request.getAttribute("title"); out.println( myTitle); %>
 	</p>
-    <h3>/users</h3>
-    <p>GET /users <a href="/users/*">Search all users and return a Json array string</a></p>
-
- <!--  <p>POST /users => <a href="/home">Requires JSON body with user login, password, salt fields</a></p>
- -->   
- <!--
-    <p>GET /users/{id} => <a href="/users/1">Retrieves the requested user as a Json String</a></p>
-    <p>PUT /users/{id} => <a href="/users/1">Update the user specified, requires a JSON body with the field or fields to be updated</a></p>
-    <p>DELETE /users/{id} => <a href="/users/1">Deletes the requested user</a></p>
-
-    <h3>/account</h3>
-    <p>POST /account/login => <a href="/account/login">Check credentials (login + password in body)</a></p>
-
-    <h3>/roles</h3>
-    <p>POST /roles => <a href="/roles">Requires JSON body with a name field. Create the role if the name is not already in use.</a></p>
-    <p>GET /roles => <a href="/roles">Retrieves all roles and returns a Json Array string</a></p>
-    <p>GET /roles/{id} => <a href="/roles/1">Retrieves the requested role as a Json String</a></p>
-    <p>PUT /roles/{id} => <a href="/roles/1">Update the role specified, requires a JSON body with the field (name) to be updated</a></p>
-    <p>DELETE /roles/{id} => <a href="/roles/1">Deletes the requested role if it is not assigned to users</a></p>
-
-    <h3>/authors</h3>
-    <p>POST /authors => <a href="/authors">Requires JSON body with a name field. Create the author if the name is not already in use.</a></p>
-    <p>GET /authors => <a href="/authors">Retrieves all authors and returns a Json Array string</a></p>
-    <p>GET /authors/{id} => <a href="/authors/1">Retrieves the requested author as a Json String</a></p>
-    <p>PUT /authors/{id} => <a href="/authors/1">Update the author specified, requires a JSON body with the field (name) to be updated</a></p>
-    <p>DELETE /authors/{id} => <a href="/authors/1">Deletes the requested author if it is not assigned to a partition (to do)</a></p>
--->
+    <h3>GET</h3>
+    <p>/users <a href="/users/*">Search all users and return a Json array string</a></p>
+    <p>/users <a href="/users/">Search all users and return a Json array string</a></p>
+    <p>/users <a href="/users">Search all users and return a Json array string</a></p>
+    <p>/users/login <a href="/users/login">Search all users corresponding to login and return a Json array string</a></p>
+	<h3>POST</h3>
+	<p>/users <a href="/users/">Add a user. Requires JSON body with user login, userName, password, idRoleUser fields</a></p>
+	<p>Example: [{"login": "titi@hotmail.be","password": "mytiti123","userName": "titi","idRoleUser": 0}]</p>
+	<h3>DELETE</h3>
+    <p>/users/login <a href="/users/login">Deletes the requested user</a></p>
+	<h3>PUT</h3>
+    <p>/users/login <a href="/users/login">Update the role specified, requires a JSON body like POST</a></p>
+	<h3>AUTHORIZE</h3>
+	<p>/users <a href="/users/auth/">Add a user. Requires JSON body with user login, userName, password, idRoleUser fields</a></p>
+	<p>/users <a href="/users/auth">Add a user. Requires JSON body with user login, userName, password, idRoleUser fields</a></p>
+	<p>Example: [{"login": "titi@hotmail.be","password": "am9obg=="}]</p>
 </body>
 </html>
