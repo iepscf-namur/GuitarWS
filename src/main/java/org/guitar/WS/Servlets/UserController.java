@@ -27,7 +27,7 @@ public class UserController extends HttpServlet {
 
         // If any parameters are given (request URL is /users or /users/)
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
-        // Read the body content and send it to UserService for user creation
+            // Read the body content and send it to UserService for user creation
             try {
                 // Transform the Json String from the body content into a Json object
                 JsonObject user = ServletUtils.readBody(request);
