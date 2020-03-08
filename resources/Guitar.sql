@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS Guitar.Users (
     login VARCHAR(64) NOT NULL,
     userName VARCHAR(64) NOT NULL,
     idRoleUser INT NOT NULL,
-    password BLOB NULL,
-    Salt BLOB NULL,
+    password BLOB NULL
     PRIMARY KEY (login)
 );
 

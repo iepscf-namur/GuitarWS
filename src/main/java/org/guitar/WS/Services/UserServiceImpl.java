@@ -50,7 +50,6 @@ public class UserServiceImpl implements IUserServices {
             jsonObj.addProperty("password", user.getPassword());
             jsonObj.addProperty("userName", user.getUserName());
             jsonObj.addProperty("idRoleUser", user.getIdRoleUser());
-            jsonObj.addProperty("salt", user.getSalt());
 
             usersJsonArray.add(jsonObj);
         }
@@ -71,7 +70,6 @@ public class UserServiceImpl implements IUserServices {
             jsonObj.addProperty("password", user.getPassword());
             jsonObj.addProperty("userName", user.getUserName());
             jsonObj.addProperty("idRoleUser", user.getIdRoleUser());
-            jsonObj.addProperty("salt", user.getSalt());
         }
         return jsonObj;
     }
@@ -87,10 +85,14 @@ public class UserServiceImpl implements IUserServices {
         if (user != null) {
             jsonObj = new JsonObject();
             jsonObj.addProperty("login", user.getLogin());
-            jsonObj.addProperty("password", user.getPassword());
             jsonObj.addProperty("userName", user.getUserName());
             jsonObj.addProperty("idRoleUser", user.getIdRoleUser());
-            jsonObj.addProperty("salt", user.getSalt());
+            
+            if (user.getPassword().toString().equals(encodedPassword)) {
+            	jsonObj.addProperty("authorized", "true");
+            } else {
+            	jsonObj.addProperty("authorized", "false");
+            }
         }
         return jsonObj;
     	
@@ -144,7 +146,6 @@ public class UserServiceImpl implements IUserServices {
             jsonObj.addProperty("password", lastInsertUser.getPassword());
             jsonObj.addProperty("userName", lastInsertUser.getUserName());
             jsonObj.addProperty("idRoleUser", lastInsertUser.getIdRoleUser());
-            jsonObj.addProperty("salt", lastInsertUser.getSalt());
         }
         return jsonObj;
     }

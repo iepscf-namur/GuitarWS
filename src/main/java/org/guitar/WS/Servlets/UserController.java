@@ -59,7 +59,9 @@ public class UserController extends HttpServlet {
                     // Transform the Json String from the body content into a Json object
             		JsonObject user = ServletUtils.readBody(request);
                     String login = (String) user.get("login").toString();
+                    login = login.substring(1, login.length()-1);
                     String encodedPassword = (String) user.get("password").toString();
+                    encodedPassword = encodedPassword.substring(1, encodedPassword.length()-1);
                     
             	    jsonResponse = UserServiceImpl.getInstance().authUsersJson((String)login, (String)encodedPassword);
                    
@@ -70,10 +72,7 @@ public class UserController extends HttpServlet {
                         //response.getWriter().write(jsonResponse.toString());
 
                     } else {
-                        //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS
-                        jsonResponse = JsonErrorBuilder.getJsonObject(201, "User " + jsonResponse.get("login").getAsString() + " has been sucesfully validated");
-                        response.setStatus(jsonResponse.get("code").getAsInt());
-                        //response.getWriter().write(jsonResponse.toString());
+                        response.setStatus(201);
                     }
 
             	}

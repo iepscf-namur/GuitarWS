@@ -13,11 +13,11 @@ public class UserDAOImpl implements IUserDAO {
     private Connection connexion;
 
     private static final String DELETE = "delete from users where login = ";
-    private static final String FIND_BY_LOGIN = "select * from users where login like ";
+//    private static final String FIND_BY_LOGIN = "select * from users where login like ";
+    private static final String FIND_BY_LOGIN = "select * from users where login = ";
     private static final String FIND_ALL = "select * from users order by login";
-    private static final String INSERT = "insert into users (login, username, idRoleUser, password, Salt) values (";
+    private static final String INSERT = "insert into users (login, username, idRoleUser, password) values (";
     private static final String UPDATE = "update users set ";
-    //private static final String AUTH_USER = "SELECT * FROM \"Users\" WHERE \"login\" = ? AND \"Password\" = ?";
 
     public UserDAOImpl(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
@@ -33,7 +33,6 @@ public class UserDAOImpl implements IUserDAO {
 
         String encodedPassword = passwordHashing.passwordEncoded(userToAdd.getPassword());
         userToAdd.setPassword(encodedPassword);
-        userToAdd.setSalt(encodedPassword);
 
         try{
             connexion = daoFactory.getConnection();
@@ -41,8 +40,7 @@ public class UserDAOImpl implements IUserDAO {
             	  "\"" + userToAdd.getLogin() + "\","
             	+ "\"" + userToAdd.getUserName() + "\","
             	+ userToAdd.getIdRoleUser() + ","            	
-            	+ "\"" + userToAdd.getPassword() + "\","
-            	+ "\"" + userToAdd.getSalt() + "\")");
+            	+ "\"" + userToAdd.getPassword() + "\")");
             
             if(preparedStatement.executeUpdate() > 0){
                 lastInsertUser = userToAdd;
@@ -65,15 +63,13 @@ public class UserDAOImpl implements IUserDAO {
 
             String encodedPassword = passwordHashing.passwordEncoded(userToAdd.getPassword());
             userToAdd.setPassword(encodedPassword);
-            userToAdd.setSalt(encodedPassword);
 
             connexion = daoFactory.getConnection();
             PreparedStatement preparedStatement = connexion.prepareStatement(UPDATE +
             		"login = " + "\"" + userToAdd.getLogin() + "\", " +
             		"password = " + "\"" + userToAdd.getPassword() + "\", " +
             		"userName = " + "\"" + userToAdd.getUserName() + "\", " +
-            		"idRoleUser = " + userToAdd.getIdRoleUser() + ", " +
-            		"Salt = " + "\"" + userToAdd.getSalt() + "\" " +
+            		"idRoleUser = " + userToAdd.getIdRoleUser() + " " +
             		"where login = " + "\"" + oldUser + "\""); 
 
             if(preparedStatement.executeUpdate() > 0) response = true ;
@@ -114,7 +110,6 @@ public class UserDAOImpl implements IUserDAO {
                 user.setPassword(resultSet.getString("password"));
                 user.setUserName(resultSet.getString("username"));
                 user.setIdRoleUser(Integer.parseInt(resultSet.getString("idroleuser")));
-                user.setSalt(resultSet.getString("salt"));
 
                 users.add(user);
             }
@@ -133,13 +128,6 @@ public class UserDAOImpl implements IUserDAO {
 
         try{
             connexion = daoFactory.getConnection();
-            if (login.equals("*")) { 
-            	login = "%";
-            }
-//            else { 
-//            	login = ("%" + login + "%");
-//            }
-            	
             Statement statement = connexion.prepareStatement(FIND_BY_LOGIN + "\"" + login + "\"");
             ResultSet resultSet = ((PreparedStatement) statement).executeQuery();
 
@@ -149,18 +137,12 @@ public class UserDAOImpl implements IUserDAO {
                 user.setPassword(resultSet.getString("password"));
                 user.setUserName(resultSet.getString("username"));
                 user.setIdRoleUser(Integer.parseInt(resultSet.getString("idroleuser")));
-                user.setSalt(resultSet.getString("salt"));
             }
         }catch(SQLException e) {
             e.printStackTrace();
         }
 
         return user ;
-    }
-
-    @Override
-    public User AuthUser(User user){
-        return null;
     }
 
 }

@@ -6,7 +6,6 @@ public class User {
 	private String password;
 	private String userName;
 	private int idRoleUser;
-	private String Salt;
 
 	public String getLogin() { return login; }
 	public void setLogin(String login) { this.login = login; }
@@ -19,8 +18,5 @@ public class User {
 
 	public int getIdRoleUser() { return idRoleUser; }
 	public void setIdRoleUser(int idRoleUser) { this.idRoleUser = idRoleUser; }
-
-	public String getSalt() { return Salt; }
-	public void setSalt(String salt) { Salt = salt; }
 
 }

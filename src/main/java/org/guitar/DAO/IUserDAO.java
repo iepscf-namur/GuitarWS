@@ -10,6 +10,5 @@ public interface IUserDAO {
     boolean DeleteUser(String login);
     User GetUser(String login);
     List<User> GetUsers();
-    User AuthUser(User user);
 
 }
