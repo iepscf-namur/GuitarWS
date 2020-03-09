@@ -35,6 +35,7 @@ public class JWTFilter implements Filter {
                 String url;
                 url = httpRequest.getRequestURI();
                 System.out.println(httpRequest.getRequestURI());
+                
                 //List of URLs that require a valid token
                 if (Stream.of("" +
                         "/users",

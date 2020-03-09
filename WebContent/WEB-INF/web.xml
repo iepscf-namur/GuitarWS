@@ -14,15 +14,17 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>UserController</servlet-name>
-        <url-pattern>/users/</url-pattern>
+        <url-pattern>/users/*</url-pattern>
     </servlet-mapping>
     
 	<!-- CORS FILTERS -->
 	<!-- Enable -->
+
     <filter>
         <filter-name>SimpleCORSFilter</filter-name>
         <filter-class>org.guitar.WS.Utils.SimpleCORSFilter</filter-class>
     </filter>
+    
     <filter-mapping>
         <filter-name>SimpleCORSFilter</filter-name>
         <url-pattern>/*</url-pattern>

@@ -23,8 +23,8 @@
 	<h3>PUT</h3>
     <p>/users/login <a href="/users/login">Update the role specified, requires a JSON body like POST</a></p>
 	<h3>AUTHORIZE (via POST)</h3>
-	<p>/users/auth/ <a href="/users/auth/">Authorizes a user. Requires JSON body with user login, userName, password, idRoleUser fields</a></p>
-	<p>/users/auth <a href="/users/auth">Authorizes a user. Requires JSON body with user login, userName, password, idRoleUser fields</a></p>
+	<p>/users/auth/ <a href="/users/auth/">Authorizes a user. Requires JSON body with user login, password encrypted fields</a></p>
+	<p>/users/auth <a href="/users/auth">Authorizes a user. Requires JSON body with user login, password encrypted fields</a></p>
 	<p>Example: [{"login":"titi.titi@skynet.be","password":"To=="}]</p>
 </body>
 </html>
