@@ -11,11 +11,11 @@ public class CatalogDAOImpl implements ICatalogDAO {
     private DAOFactory daoFactory;
     private Connection connexion;
 
-    private static final String DELETE = "DELETE FROM \"Catalog\" WHERE \"idSong\" = ?;";
-    private static final String FIND_BY_IDSONG = "SELECT * FROM \"Catalog\" WHERE \"idSong\" = ?;";
-    private static final String FIND_ALL = "SELECT * FROM \"Catalog\" ORDER BY \"idSong\";";
-    private static final String INSERT = "INSERT INTO \"Catalog\" (\"idSong\",\"artistName\",\"songTitle\") VALUES (?,?,?,?)";
-    private static final String UPDATE = "UPDATE \"Catalog\" SET \"idSong\"=?, \"artistName\"=?, \"songTitle\"=? WHERE \"idSong\"=?";
+    private static final String DELETE = "delete from catalog where idSong = ";
+    private static final String FIND_BY_SONGTITLE = "select * from catalog where songTitle = ";
+    private static final String FIND_ALL = "select * from catalog order by idSong";
+    private static final String INSERT = "insert into catalog (artistName, songTitle) values (";
+    private static final String UPDATE = "update catalog set ";
 
     public CatalogDAOImpl(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -29,9 +29,9 @@ public class CatalogDAOImpl implements ICatalogDAO {
 
         try {
             connexion = daoFactory.getConnection();
-            PreparedStatement preparedStatement = connexion.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, catalog.getSongTitle());
-
+            PreparedStatement preparedStatement = connexion.prepareStatement(INSERT +
+            		"\"" + catalog.getArtistName() + "\","
+            	  + "\"" + catalog.getSongTitle() + "\")");
             preparedStatement.executeUpdate();
             ResultSet generatedKey = preparedStatement.getGeneratedKeys();
 
@@ -52,15 +52,17 @@ public class CatalogDAOImpl implements ICatalogDAO {
     }
 
     @Override
-    public int UpdateCatalog(Catalog catalog, int oldCatalog) {
+    public int UpdateCatalog(Catalog catalog, int oldSongTitle) {
 
         int nbRowsAffected = 0;
+        
         try {
 
             connexion = daoFactory.getConnection();
-            PreparedStatement preparedStatement = connexion.prepareStatement(UPDATE);
-            preparedStatement.setString(1, catalog.getSongTitle());
-            preparedStatement.setInt(2, oldCatalog);
+            PreparedStatement preparedStatement = connexion.prepareStatement(UPDATE +
+            		"artistName = " + "\"" + catalog.getArtistName() + "\", " +
+            		"songTitle = " + "\"" + catalog.getSongTitle() + "\"" +
+            		"where songTitle = " + "\"" + oldSongTitle + "\"");
 
             nbRowsAffected = preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -74,33 +76,31 @@ public class CatalogDAOImpl implements ICatalogDAO {
     }
 
     @Override
-    public int DeleteCatalog(int catalog) {
+    public boolean DeleteCatalog(int idSong) {
 
-        int nbRowsAffected = 0;
+        boolean response = false ;
 
         try {
             connexion = daoFactory.getConnection();
-            PreparedStatement preparedStatement = connexion.prepareStatement(DELETE);
-            preparedStatement.setInt(1, catalog);
+            PreparedStatement preparedStatement = connexion.prepareStatement(DELETE + "\"" + idSong + "\"");
 
-            nbRowsAffected = preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() > 0) response = true;
             preparedStatement.close();
             connexion.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return nbRowsAffected;
+        return response;
     }
 
     @Override
-    public Catalog GetCatalog(int idSong) {
+    public Catalog GetCatalog(int songTitle) {
         Catalog catalog = null;
 
         try {
             connexion = daoFactory.getConnection();
-            Statement statement = connexion.prepareStatement(FIND_BY_IDSONG);
-            ((PreparedStatement) statement).setInt(1, idSong);
+            Statement statement = connexion.prepareStatement(FIND_BY_SONGTITLE + "\"" + songTitle + "\"");
             ResultSet resultSet = ((PreparedStatement) statement).executeQuery();
 
             if (resultSet.next()) {
