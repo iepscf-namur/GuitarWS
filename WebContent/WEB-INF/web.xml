@@ -18,7 +18,7 @@
     </servlet-mapping>
     
 	<!-- CORS FILTERS -->
-	<!-- Enable -->
+		<!-- Enable -->
 
     <filter>
         <filter-name>SimpleCORSFilter</filter-name>
@@ -30,7 +30,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- Restrict -->
+    	<!-- Restrict -->
     <!-- 
     <filter>
         <filter-name>JWTFilter</filter-name>
