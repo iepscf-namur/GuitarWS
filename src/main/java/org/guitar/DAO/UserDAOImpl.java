@@ -13,7 +13,6 @@ public class UserDAOImpl implements IUserDAO {
     private Connection connexion;
 
     private static final String DELETE = "delete from users where login = ";
-//    private static final String FIND_BY_LOGIN = "select * from users where login like ";
     private static final String FIND_BY_LOGIN = "select * from users where login = ";
     private static final String FIND_ALL = "select * from users order by login";
     private static final String INSERT = "insert into users (login, username, idRoleUser, password) values (";
@@ -55,7 +54,8 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public boolean UpdateUser(User user, String oldUser) {
-        boolean response = false ;
+        
+    	boolean response = false ;
         try {
 
             PasswordHashing passwordHashing = new PasswordHashing();
@@ -82,7 +82,8 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public boolean DeleteUser(String login) {
-        //FIXME MAYBE SENDING BACK A FULL REPRESENTATION OF THE DELETED USER ?
+        
+    	//FIXME MAYBE SENDING BACK A FULL REPRESENTATION OF THE DELETED USER ?
         boolean response = false ;
         try {
             connexion = daoFactory.getConnection();
@@ -98,7 +99,8 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public List<User> GetUsers() {
-        List<User> users = new LinkedList<User>();
+        
+    	List<User> users = new LinkedList<User>();
         try {
             connexion = daoFactory.getConnection();
             Statement statement = connexion.createStatement();
@@ -124,7 +126,8 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public User GetUser(String login){
-        User user = null;
+
+    	User user = null;
 
         try{
             connexion = daoFactory.getConnection();

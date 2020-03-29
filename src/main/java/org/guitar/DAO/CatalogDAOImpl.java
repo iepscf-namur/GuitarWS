@@ -30,8 +30,8 @@ public class CatalogDAOImpl implements ICatalogDAO {
         try {
             connexion = daoFactory.getConnection();
             PreparedStatement preparedStatement = connexion.prepareStatement(INSERT +
-            		"\"" + catalog.getArtistName() + "\","
-            	  + "\"" + catalog.getSongTitle() + "\")");
+            	    "\"" + catalog.getArtistName() + "\","
+            	  + "\"" + catalog.getSongTitle() + "\")", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.executeUpdate();
             ResultSet generatedKey = preparedStatement.getGeneratedKeys();
 
@@ -52,19 +52,19 @@ public class CatalogDAOImpl implements ICatalogDAO {
     }
 
     @Override
-    public int UpdateCatalog(Catalog catalog, int oldSongTitle) {
+    public boolean UpdateCatalog(Catalog catalog, String oldSongTitle) {
 
-        int nbRowsAffected = 0;
+        boolean response = false ;
         
         try {
 
             connexion = daoFactory.getConnection();
             PreparedStatement preparedStatement = connexion.prepareStatement(UPDATE +
             		"artistName = " + "\"" + catalog.getArtistName() + "\", " +
-            		"songTitle = " + "\"" + catalog.getSongTitle() + "\"" +
+            		"songTitle = " + "\"" + catalog.getSongTitle() + "\" " +
             		"where songTitle = " + "\"" + oldSongTitle + "\"");
 
-            nbRowsAffected = preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() > 0) response = true ;
             preparedStatement.close();
             connexion.close();
 
@@ -72,7 +72,7 @@ public class CatalogDAOImpl implements ICatalogDAO {
             e.printStackTrace();
         }
 
-        return nbRowsAffected;
+        return response;
     }
 
     @Override
@@ -95,8 +95,9 @@ public class CatalogDAOImpl implements ICatalogDAO {
     }
 
     @Override
-    public Catalog GetCatalog(int songTitle) {
-        Catalog catalog = null;
+    public Catalog GetCatalog(String songTitle) {
+
+    	Catalog catalog = null;
 
         try {
             connexion = daoFactory.getConnection();
@@ -122,7 +123,8 @@ public class CatalogDAOImpl implements ICatalogDAO {
 
     @Override
     public List<Catalog> GetCatalogs() {
-        List<Catalog> catalogs = new LinkedList<>();
+
+    	List<Catalog> catalogs = new LinkedList<>();
 
         try {
             connexion = daoFactory.getConnection();

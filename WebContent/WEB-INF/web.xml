@@ -17,6 +17,24 @@
         <url-pattern>/users/*</url-pattern>
     </servlet-mapping>
     
+    <servlet>
+    	<servlet-name>UserAccountController</servlet-name>
+    	<servlet-class>org.guitar.WS.Servlets.UserAccountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    	<servlet-name>UserAccountController</servlet-name>
+    	<url-pattern>/login/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>CatalogController</servlet-name>
+        <servlet-class>org.guitar.WS.Servlets.CatalogController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CatalogController</servlet-name>
+        <url-pattern>/catalog/*</url-pattern>
+    </servlet-mapping>
+
 	<!-- CORS FILTERS -->
 		<!-- Enable -->
 

@@ -1,19 +1,14 @@
 package org.guitar.DAO.Utils;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import io.jsonwebtoken.*;
-
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.Claims;
 
 /* Our simple static class that demonstrates how to create and decode JWTs. */
 public class JWTUtils {

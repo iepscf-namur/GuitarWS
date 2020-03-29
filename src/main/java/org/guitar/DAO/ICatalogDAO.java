@@ -8,9 +8,9 @@ import java.util.List;
 public interface ICatalogDAO {
 
     Catalog AddCatalog(Catalog catalog);
-    int UpdateCatalog(Catalog catalog, int oldSongTitle);
+    boolean UpdateCatalog(Catalog catalog, String oldSongTitle);
     boolean DeleteCatalog(int idSong);
-    Catalog GetCatalog(int songTitle);
+    Catalog GetCatalog(String songTitle);
     List<Catalog> GetCatalogs();
 
 }

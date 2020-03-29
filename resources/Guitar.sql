@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Guitar.Users (
 );
 
 CREATE TABLE IF NOT EXISTS Guitar.Catalog (
-   	idSong INT NOT NULL,
+   	idSong INT NOT NULL AUTO_INCREMENT,
 	artistName VARCHAR(64) NOT NULL,
 	songTitle VARCHAR(255) NOT NULL,
 	PRIMARY KEY (idSong)

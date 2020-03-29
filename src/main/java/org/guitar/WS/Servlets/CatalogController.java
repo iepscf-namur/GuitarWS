@@ -4,7 +4,7 @@ import org.guitar.DAO.DAOFactory;
 import org.guitar.DAO.Utils.GetPropertyValues;
 import org.guitar.WS.Errors.JsonErrorBuilder;
 import org.guitar.WS.Utils.ServletUtils;
-import org.guitar.WS.Services.UserServiceImpl;
+import org.guitar.WS.Services.CatalogServiceImpl;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,81 +16,80 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class UserController extends HttpServlet {
-	
+public class CatalogController extends HttpServlet {
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // We need to set Response Header's Content-Type and CharacterEncoding before sending it to the client
+    	// We need to set Response Header's Content-Type and CharacterEncoding before sending it to the client
         ServletUtils.setResponseSettings(response);
 
         JsonObject jsonResponse = null;
 
-        // If any parameters are given (request URL is /users or /users/)
+        // If any parameters are given (request URL is /catalog or /catalog/)
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
-            // Read the body content and send it to UserService for user creation
+            // Read the body content and send it to CatalogService for catalog creation
             try {
                 // Transform the Json String from the body content into a Json object
-                JsonObject user = ServletUtils.readBody(request);
-                jsonResponse = UserServiceImpl.getInstance().addUserJson(user);
+                JsonObject catalog = ServletUtils.readBody(request);
+                jsonResponse = CatalogServiceImpl.getInstance().addCatalogJson(catalog);
 
                 if (jsonResponse == null) {
                     //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
-                    jsonResponse = JsonErrorBuilder.getJsonObject(500, "User not created");
+                    jsonResponse = JsonErrorBuilder.getJsonObject(500, "Catalog not created");
                     response.setStatus(jsonResponse.get("code").getAsInt());
                     //response.getWriter().write(jsonResponse.toString());
 
                 } else {
                     //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS
-                    jsonResponse = JsonErrorBuilder.getJsonObject(201, "User " + jsonResponse.get("login").getAsString() + " has been sucesfully created");
+                    jsonResponse = JsonErrorBuilder.getJsonObject(201, "Catalog " +
+                    		jsonResponse.get("idSong").getAsInt() + " has been sucesfully created");
                     response.setStatus(jsonResponse.get("code").getAsInt());
                     //response.getWriter().write(jsonResponse.toString());
                 }
 
             } catch(Exception e) {
                 jsonResponse = JsonErrorBuilder.getJsonObject(500,
-                        "An error occurred while processing the data provided (POST UserController)");
+                        "An error occurred while processing the data provided (POST CatalogController)");
                 response.setStatus(jsonResponse.get("code").getAsInt());
                 e.printStackTrace();
             }
-
-        // If URL is different from /users
-        } else {
-        	jsonResponse = JsonErrorBuilder.getJsonObject(404,
+          } else {
+            jsonResponse = JsonErrorBuilder.getJsonObject(404,
                     request.getServletPath() + request.getPathInfo() + " is not a supported POST url");
             response.setStatus(jsonResponse.get("code").getAsInt());
             //response.getWriter().write(jsonResponse.toString());
-        }
+          }
 
         response.getWriter().write(jsonResponse.toString());
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
+
     	// We need to set Response Header's Content-Type and CharacterEncoding before sending it to the client
         ServletUtils.setResponseSettings(response);
 
-        // If any parameters are given (request URL is /users or /users/)
+        // If any parameters are given (request URL is /catalog or /catalog/)
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
-            JsonArray jsonResponse = UserServiceImpl.getInstance().getUsersJson();
+            JsonArray jsonResponse = CatalogServiceImpl.getInstance().getCatalogsJson();
             response.setStatus(200);
             response.getWriter().write(jsonResponse.toString());
             return;
 
-            // If some parameters are given (request URL is /users{login})
+            // If some parameters are given (request URL is /catalog{songTitle})
         } else if(request.getPathInfo().substring(1).length()> 0) {
             JsonObject jsonResponse =  null;
-            // Remove "/" at the beginning of the string 
-            String login = "";
-            login = request.getPathInfo();
-            login = login.substring(2, login.length() -1);
+            // Remove "/" at the beginning of the string as well as "
+            String songTitle = "";
+            songTitle = request.getPathInfo();
+            songTitle = songTitle.substring(2, songTitle.length() -1);
             
-            jsonResponse = UserServiceImpl.getInstance().getUserJson(login);
+            jsonResponse = CatalogServiceImpl.getInstance().getCatalogJson(songTitle);
 
             if(jsonResponse == null) {
                 //FIXME WILL NEVER HAPPENS CAUSE OF ERROR HANDLING IN SERVICE
-                jsonResponse = JsonErrorBuilder.getJsonObject(404, "user not found");
+                jsonResponse = JsonErrorBuilder.getJsonObject(404, "catalog not found");
                 response.setStatus(jsonResponse.get("code").getAsInt());
                 //response.getWriter().write(jsonResponse.toString());
             } else {
@@ -117,14 +116,14 @@ public class UserController extends HttpServlet {
 
         JsonObject jsonResponse = null;
 
-        // If some parameters are given (request URL is /users{login})
+        // If some parameters are given (request URL is /catalogs{songTitle})
         if (request.getPathInfo().substring(1).length()> 0) {
-            // Remove "/" at the beginning of the string 
-            String login = "";
-            login = request.getPathInfo();
-            login = login.substring(2, login.length() -1);
+            // Remove "/" at the beginning of the string
+            String songTitle = "";
+            songTitle = request.getPathInfo();
+            songTitle = songTitle.substring(2, songTitle.length() -1);
 
-            jsonResponse = UserServiceImpl.getInstance().deleteUserJson(login);
+            jsonResponse = CatalogServiceImpl.getInstance().deleteCatalogJson(songTitle);
 
             response.setStatus(jsonResponse.get("code").getAsInt());
 
@@ -136,7 +135,7 @@ public class UserController extends HttpServlet {
                             " is not a supported DELETE url");
             response.setStatus(jsonResponse.get("code").getAsInt());
 
-        }
+    	}
 
         response.getWriter().write(jsonResponse.toString());
     }
@@ -149,34 +148,34 @@ public class UserController extends HttpServlet {
 
         JsonObject jsonResponse = null;
 
-        // If some parameters are given (request URL is /users{login})
+        // If some parameters are given (request URL is /catalog{songTitle})
         if (request.getPathInfo().substring(1).length()> 0) {
-            // Remove "/" at the beginning of the string 
-            String login = "";
-            login = request.getPathInfo();
-            login = login.substring(2, login.length() -1);
+            // Remove "/" at the beginning of the string as well as "
+            String songTitle = "";
+            songTitle = request.getPathInfo();
+            songTitle = songTitle.substring(2, songTitle.length() -1);
 
             try {
-                JsonObject user = ServletUtils.readBody(request);
-                user.addProperty("Oldlogin", login);
-                jsonResponse = UserServiceImpl.getInstance().updateUserJson(user);
+                JsonObject catalog = ServletUtils.readBody(request);
+                catalog.addProperty("Oldsongtitle", songTitle);
+                jsonResponse = CatalogServiceImpl.getInstance().updateCatalogJson(catalog);
 
                 if (jsonResponse == null) {
                     //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
-                    jsonResponse = JsonErrorBuilder.getJsonObject(500, "User not updated");
+                    jsonResponse = JsonErrorBuilder.getJsonObject(500, "Catalog not updated");
                     response.setStatus(jsonResponse.get("code").getAsInt());
                     //response.getWriter().write(jsonResponse.toString());
 
                 } else {
-                    //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS + RETRIEVE A COMPLETE USER OBJECT
-                    //jsonResponse = JsonErrorBuilder.getJsonObject(201, "User " + jsonResponse.get("login").getAsString() + " has been sucesfully updated");
+                    //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS + RETRIEVE A COMPLETE CATALOG OBJECT
+                    //jsonResponse = JsonErrorBuilder.getJsonObject(201, "Catalog " + jsonResponse.get("songTitle").getAsString() + " has been sucesfully updated");
                     response.setStatus(jsonResponse.get("code").getAsInt());
                     //response.getWriter().write(jsonResponse.toString());
                 }
 
             } catch(Exception e) {
                 jsonResponse = JsonErrorBuilder.getJsonObject(
-                        500, "An error occurred while processing the data provided (PUT UserController)");
+                        500, "An error occurred while processing the data provided (PUT CatalogController)");
                 response.setStatus(jsonResponse.get("code").getAsInt());
                 e.printStackTrace();
             }
@@ -188,7 +187,7 @@ public class UserController extends HttpServlet {
                             " is not a supported PUT url");
             response.setStatus(jsonResponse.get("code").getAsInt());
         }
+
         response.getWriter().write(jsonResponse.toString());
     }
-
 }
