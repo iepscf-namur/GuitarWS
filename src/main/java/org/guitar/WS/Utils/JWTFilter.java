@@ -38,6 +38,7 @@ public class JWTFilter implements Filter {
                 
                 //List of URLs that require a valid token
                 if (Stream.of("" +
+                        "/login",
                         "/users",
                         "/catalog"
                         ).anyMatch(url::equalsIgnoreCase)) {
@@ -79,6 +80,7 @@ public class JWTFilter implements Filter {
     }
 
     public void init(FilterConfig config) throws ServletException {
+    	
     }
 
     private Map<String, String> getHeadersInfo(HttpServletRequest request) {
