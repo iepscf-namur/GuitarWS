@@ -67,4 +67,6 @@ public class DAOFactory {
 
     public IUserDAO getUserDAO() { return new UserDAOImpl(this); }
     public ICatalogDAO getCatalogDAO() { return new CatalogDAOImpl(this); }
+    public IRoleDAO getRoleDAO() { return new RoleDAOImpl(this); }
+    
 }

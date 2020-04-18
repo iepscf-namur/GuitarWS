@@ -1,7 +1,6 @@
 package org.guitar.DAO;
 
 import org.guitar.DAO.Beans.Catalog;
-import org.guitar.DAO.Beans.User;
 
 import java.util.List;
 

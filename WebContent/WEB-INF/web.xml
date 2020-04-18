@@ -34,6 +34,15 @@
         <servlet-name>CatalogController</servlet-name>
         <url-pattern>/catalog/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>RoleController</servlet-name>
+        <servlet-class>org.guitar.WS.Servlets.RoleController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoleController</servlet-name>
+        <url-pattern>/roles/*</url-pattern>
+    </servlet-mapping>
 
 	<!-- CORS FILTERS -->
 		<!-- Enable -->
