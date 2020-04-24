@@ -44,6 +44,15 @@
         <url-pattern>/roles/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>SongController</servlet-name>
+        <servlet-class>org.guitar.WS.Servlets.SongController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SongController</servlet-name>
+        <url-pattern>/songs/*</url-pattern>
+    </servlet-mapping>
+
 	<!-- CORS FILTERS -->
 		<!-- Enable -->
 

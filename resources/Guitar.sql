@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Guitar.Users (
     login VARCHAR(64) NOT NULL,
     userName VARCHAR(64) NOT NULL,
     idRoleUser INT NOT NULL,
-    password BLOB NULL
+    password BLOB NULL,
     PRIMARY KEY (login)
 );
 
@@ -18,6 +18,13 @@ CREATE TABLE IF NOT EXISTS Guitar.Catalog (
 	artistName VARCHAR(64) NOT NULL,
 	songTitle VARCHAR(255) NOT NULL,
 	PRIMARY KEY (idSong)
+);
+
+CREATE TABLE IF NOT EXISTS Guitar.Songs (
+	id INT NOT NULL AUTO_INCREMENT,
+	idCatalogSong INT NOT NULL,
+	song BLOB NULL,
+	PRIMARY KEY (id)
 );
 
 GRANT ALL PRIVILEGES ON guitar.* to guituser@'%' IDENTIFIED BY 'guituser';
