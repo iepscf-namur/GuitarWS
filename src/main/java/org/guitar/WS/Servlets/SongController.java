@@ -4,6 +4,7 @@ import org.guitar.DAO.DAOFactory;
 import org.guitar.DAO.Utils.GetPropertyValues;
 import org.guitar.WS.Errors.JsonErrorBuilder;
 import org.guitar.WS.Utils.ServletUtils;
+import org.guitar.WS.Services.CatalogServiceImpl;
 import org.guitar.WS.Services.SongServiceImpl;
 
 import com.google.gson.JsonArray;
@@ -31,21 +32,47 @@ public class SongController extends HttpServlet {
             // Read the body content and send it to SongService for song creation
             try {
                 // Transform the Json String from the body content into a Json object
-                JsonObject song = ServletUtils.readBody(request);
-                jsonResponse = SongServiceImpl.getInstance().addSongJson(song);
-
+            	//JsonObject song = ServletUtils.readBody(request);
+                JsonObject temp = ServletUtils.readBody(request);
+                
+                // Create the Json catalog
+                JsonObject catalog = new JsonObject();
+                catalog.addProperty("artistName", temp.get("artistName").getAsString());
+                catalog.addProperty("songTitle", temp.get("songTitle").getAsString());
+                
+                jsonResponse = CatalogServiceImpl.getInstance().addCatalogJson(catalog);
+                
                 if (jsonResponse == null) {
                     //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
-                    jsonResponse = JsonErrorBuilder.getJsonObject(500, "Song not created");
+                    jsonResponse = JsonErrorBuilder.getJsonObject(500, "Catalog not created");
                     response.setStatus(jsonResponse.get("code").getAsInt());
                     //response.getWriter().write(jsonResponse.toString());
 
                 } else {
-                    //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS
-                    jsonResponse = JsonErrorBuilder.getJsonObject(201, "Song " +
-                    		jsonResponse.get("id").getAsInt() + " has been sucesfully created");
-                    response.setStatus(jsonResponse.get("code").getAsInt());
-                    //response.getWriter().write(jsonResponse.toString());
+                	// Search the new idCatalogSong just created
+                	Integer idCatalogSong = jsonResponse.get("idSong").getAsInt();
+
+                	// Create the Json song
+                    JsonObject song = new JsonObject();
+                    song.addProperty("idCatalogSong", jsonResponse.get("idSong").getAsInt());
+                    song.addProperty("song", temp.get("song").getAsString());
+
+                    jsonResponse = SongServiceImpl.getInstance().addSongJson(song);
+
+                    if (jsonResponse == null) {
+                        //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
+                        jsonResponse = JsonErrorBuilder.getJsonObject(500, "Song not created");
+                        response.setStatus(jsonResponse.get("code").getAsInt());
+                        //response.getWriter().write(jsonResponse.toString());
+
+                    } else {
+                        //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS
+                        jsonResponse = JsonErrorBuilder.getJsonObject(201, "Song " +
+                        		jsonResponse.get("id").getAsInt() + " has been sucesfully created");
+                        response.setStatus(jsonResponse.get("code").getAsInt());
+                        //response.getWriter().write(jsonResponse.toString());
+                    }
+                
                 }
 
             } catch(Exception e) {
@@ -54,6 +81,7 @@ public class SongController extends HttpServlet {
                 response.setStatus(jsonResponse.get("code").getAsInt());
                 e.printStackTrace();
             }
+            
           } else {
             jsonResponse = JsonErrorBuilder.getJsonObject(404,
                     request.getServletPath() + request.getPathInfo() + " is not a supported POST url");
@@ -118,15 +146,20 @@ public class SongController extends HttpServlet {
 
         JsonObject jsonResponse = null;
 
-        // If some parameters are given (request URL is /songs{idCatalogSong})
+        // If some parameters are given (request URL is /songs{songTitle})
         if (request.getPathInfo().substring(1).length()> 0) {
             // Remove "/" at the beginning of the string
-            String idCatalogSong = "";
-            idCatalogSong = request.getPathInfo();
-            idCatalogSong = idCatalogSong.substring(2, idCatalogSong.length() -1);
-	        int i = Integer.parseInt(idCatalogSong);
+            String songTitle = "";
+            songTitle = request.getPathInfo();
+            songTitle = songTitle.substring(2, songTitle.length() -1);
 
-            jsonResponse = SongServiceImpl.getInstance().deleteSongJson(i);
+            // delete the song from the catalog but previously, take the idCatalogSong
+            jsonResponse = CatalogServiceImpl.getInstance().getCatalogJson(songTitle);
+        	Integer idCatalogSong = jsonResponse.get("idSong").getAsInt();
+        	jsonResponse = CatalogServiceImpl.getInstance().deleteCatalogJson(songTitle);
+
+            // now delete the song from the song repository
+        	jsonResponse = SongServiceImpl.getInstance().deleteSongJson(idCatalogSong);
 
             response.setStatus(jsonResponse.get("code").getAsInt());
 
@@ -144,24 +177,31 @@ public class SongController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // We need to set Response Header's Content-Type and CharacterEncoding before sending it to the client
+    	// We need to set Response Header's Content-Type and CharacterEncoding before sending it to the client
         ServletUtils.setResponseSettings(response);
 
         JsonObject jsonResponse = null;
 
-        // If some parameters are given (request URL is /songs{oldIdCatalogSong})
+        // If some parameters are given (request URL is /songs{songTitle})
         if (request.getPathInfo().substring(1).length()> 0) {
-            // Remove "/" at the beginning of the string as well as "
-            String oldIdCatalogSong = "";
-            oldIdCatalogSong = request.getPathInfo();
-            oldIdCatalogSong = oldIdCatalogSong.substring(2, oldIdCatalogSong.length() -1);
-	        int i = Integer.parseInt(oldIdCatalogSong);
+        	// Remove "/" at the beginning of the string as well as "
+            String oldSongTitle = "";
+            oldSongTitle = request.getPathInfo();
+            oldSongTitle = oldSongTitle.substring(2, oldSongTitle.length() -1);
 
             try {
-                JsonObject song = ServletUtils.readBody(request);
-                song.addProperty("oldIdCatalogSong", i);
-                jsonResponse = SongServiceImpl.getInstance().updateSongJson(song);
-
+                // Transform the Json String from the body content into a Json object
+            	// JsonObject song = ServletUtils.readBody(request);
+                JsonObject temp = ServletUtils.readBody(request);
+                
+                // Create the Json catalog
+                JsonObject catalog = new JsonObject();
+                catalog.addProperty("artistName", temp.get("artistName").getAsString());
+                catalog.addProperty("songTitle", temp.get("songTitle").getAsString());
+                catalog.addProperty("oldSongTitle", oldSongTitle);
+                
+                jsonResponse = CatalogServiceImpl.getInstance().updateCatalogJson(catalog);
+               
                 if (jsonResponse == null) {
                     //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
                     jsonResponse = JsonErrorBuilder.getJsonObject(500, "Song not updated");
@@ -169,10 +209,21 @@ public class SongController extends HttpServlet {
                     //response.getWriter().write(jsonResponse.toString());
 
                 } else {
-                    //FIXME CREATING AN ERROR BUILDER THAT COULD WORK WITH SUCCESS HTTP REQUESTS + RETRIEVE A COMPLETE SONG OBJECT
-                    //jsonResponse = JsonErrorBuilder.getJsonObject(201, "Song " + jsonResponse.get("songTitle").getAsString() + " has been sucesfully updated");
-                    response.setStatus(jsonResponse.get("code").getAsInt());
-                    //response.getWriter().write(jsonResponse.toString());
+                	
+                	// Create the Json song
+                	JsonObject song = new JsonObject();
+                	song.addProperty("oldIdCatalogSong", jsonResponse.get("idCatalogSong").getAsInt());
+                	song.addProperty("idCatalogSong", jsonResponse.get("idCatalogSong").getAsInt());
+                	song.addProperty("song",temp.get("song").getAsString());
+                	
+                	jsonResponse = SongServiceImpl.getInstance().updateSongJson(song);
+
+                    if (jsonResponse == null) {
+                        jsonResponse = JsonErrorBuilder.getJsonObject(500, "Song not updated");
+                        response.setStatus(jsonResponse.get("code").getAsInt());
+                    } else {
+                    	response.setStatus(jsonResponse.get("code").getAsInt());
+                    }
                 }
 
             } catch(Exception e) {
@@ -192,5 +243,6 @@ public class SongController extends HttpServlet {
 
         response.getWriter().write(jsonResponse.toString());
     }
+    
 }
 

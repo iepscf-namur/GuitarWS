@@ -12,7 +12,7 @@ public class SongDAOImpl implements ISongDAO {
     private Connection connexion;
 
     private static final String DELETE = "delete from songs where idCatalogSong = ";
-    private static final String FIND_BY_SONGTITLE = "select * from songs where idCatalogSong = ";
+    private static final String FIND_BY_IDCATALOGSONG = "select * from songs where idCatalogSong = ";
     private static final String FIND_ALL = "select * from songs order by idCatalogSong";
     private static final String INSERT = "insert into songs (idCatalogSong, song) values (";
     private static final String UPDATE = "update songs set ";
@@ -60,9 +60,9 @@ public class SongDAOImpl implements ISongDAO {
 
             connexion = daoFactory.getConnection();
             PreparedStatement preparedStatement = connexion.prepareStatement(UPDATE +
-            		"idCatalogSong = " + song.getIdCatalogSong() +
+            		"idCatalogSong = " + song.getIdCatalogSong() + ", " +
             		"song = " + "\"" + song.getSong() + "\" " +
-            		"where idCatalogSong = " + oldIdCatalogSong + "\"");
+            		"where idCatalogSong = " + oldIdCatalogSong);
 
             if(preparedStatement.executeUpdate() > 0) response = true ;
             preparedStatement.close();
@@ -102,7 +102,7 @@ public class SongDAOImpl implements ISongDAO {
 
         try {
             connexion = daoFactory.getConnection();
-            Statement statement = connexion.prepareStatement(FIND_BY_SONGTITLE + idCatalogSong);
+            Statement statement = connexion.prepareStatement(FIND_BY_IDCATALOGSONG + idCatalogSong);
             ResultSet resultSet = ((PreparedStatement) statement).executeQuery();
 
             if (resultSet.next()) {

@@ -132,7 +132,7 @@ public class CatalogServiceImpl implements ICatalogServices {
     @Override
     public JsonObject updateCatalogJson(JsonObject jsonObject) {
 
-        if(!isCatalogValid(jsonObject) && jsonObject.has("Oldsongtitle")) {
+        if(!isCatalogValid(jsonObject) && jsonObject.has("oldSongtitle")) {
             //FIXME This error will never show up as it will be encapsulated in a Servlet TRY
             return JsonErrorBuilder.getJsonObject(400,
                     "required field missing or incorrectly formatted, please check the requirements");
@@ -143,8 +143,8 @@ public class CatalogServiceImpl implements ICatalogServices {
 
         JsonObject jsonResponse = null;
 
-        String oldsongtitle = jsonObject.get("Oldsongtitle").getAsString();
-        Catalog catalog = catalogDAO.GetCatalog(jsonObject.get("Oldsongtitle").getAsString());
+        String oldSongTitle = jsonObject.get("oldSongTitle").getAsString();
+        Catalog catalog = catalogDAO.GetCatalog(jsonObject.get("oldSongTitle").getAsString());
 
         if(catalog != null) {
             // TODO Send message if field provided does not exist ?
@@ -158,9 +158,11 @@ public class CatalogServiceImpl implements ICatalogServices {
                 catalog.setSongTitle(jsonObject.get("songTitle").getAsString());
             }
 
-            if(catalogDAO.UpdateCatalog(catalog, oldsongtitle)) {
+            if(catalogDAO.UpdateCatalog(catalog, oldSongTitle)) {
                 // FIXME rename or extends JsonBuilder so we do not use "error" here
                 jsonResponse = JsonErrorBuilder.getJsonObject(200, "Catalog " + catalog.getIdSong() + " updated");
+            	jsonResponse.addProperty("idCatalogSong",catalog.getIdSong());
+
             } else {
                 jsonResponse = JsonErrorBuilder.getJsonObject(400, "Catalog found but not updated");
             }

@@ -119,7 +119,7 @@ public class SongServiceImpl implements ISongServices {
         Song song = songDAO.GetSong(idCatalogSong);
         if(song != null) {
 
-            if(songDAO.DeleteSong(song.getId())) {
+            if(songDAO.DeleteSong(song.getIdCatalogSong())) {
                 // FIXME rename or extends JsonBuilder so we do not use "error" here
                 jsonResponse = JsonErrorBuilder.getJsonObject(200, "Song deleted");
             }
