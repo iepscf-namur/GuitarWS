@@ -69,5 +69,6 @@ public class DAOFactory {
     public ICatalogDAO getCatalogDAO() { return new CatalogDAOImpl(this); }
     public IRoleDAO getRoleDAO() { return new RoleDAOImpl(this); }
     public ISongDAO getSongDAO() { return new SongDAOImpl(this); }
+    public ISetupDAO getSetupDAO() { return new SetupDAOImpl(this); }
     
 }

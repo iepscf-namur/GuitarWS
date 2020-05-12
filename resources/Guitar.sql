@@ -27,5 +27,13 @@ CREATE TABLE IF NOT EXISTS Guitar.Songs (
 	PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS Guitar.Setup (
+	id INT NOT NULL AUTO_INCREMENT,
+	idCatalogSong INT NOT NULL,
+	duration INT NOT NULL,
+	fontSize INT NOT NULL,
+	PRIMARY KEY (id)
+);
+
 GRANT ALL PRIVILEGES ON guitar.* to guituser@'%' IDENTIFIED BY 'guituser';
 GRANT ALL PRIVILEGES ON guitar.* to guituser@'localhost' IDENTIFIED BY 'guituser';

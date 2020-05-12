@@ -52,6 +52,15 @@
         <servlet-name>SongController</servlet-name>
         <url-pattern>/songs/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+    	<servlet-name>SetupController</servlet-name>
+    	<servlet-class>org.guitar.WS.Servlets.SetupController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    	<servlet-name>SetupController</servlet-name>
+    	<url-pattern>/setup/*</url-pattern>
+    </servlet-mapping>
 
 	<!-- CORS FILTERS -->
 		<!-- Enable -->
