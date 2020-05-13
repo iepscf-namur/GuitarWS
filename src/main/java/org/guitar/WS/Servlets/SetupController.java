@@ -104,24 +104,21 @@ public class SetupController extends HttpServlet {
 
         JsonObject jsonResponse = null;
 
-        // If some parameters are given (request URL is /setup{setup})
-        if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
+        // If some parameters are given (request URL is /setup{idCatalogSong})
+        if (request.getPathInfo().substring(1).length()> 0) {
+            // Remove "/" at the beginning of the string as well as "
+            String idCatalogSong = "";
+            idCatalogSong = request.getPathInfo();
+            idCatalogSong = idCatalogSong.substring(2, idCatalogSong.length() -1);
+            int i = Integer.parseInt(idCatalogSong);
 
             try {
-                // Transform the Json String from the body content into a Json object                
-                JsonObject temp = ServletUtils.readBody(request);
-
-                // Create the Setup object
-                JsonObject setup = new JsonObject();
-                setup.addProperty("idCatalogSong", temp.get("idCatalogSong").getAsInt());
-                setup.addProperty("duration", temp.get("duration").getAsInt());
-                setup.addProperty("fontSize", temp.get("fontSize").getAsInt());
-                
-                // Try to update
+                JsonObject setup = ServletUtils.readBody(request);
+                setup.addProperty("idCatalogSong", i);
                 jsonResponse = SetupServiceImpl.getInstance().updateSetupJson(setup);
 
                 if (jsonResponse == null) {
-                	//FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
+                    //FIXME CREATING AN ERROR BUILDER THAT COULD WRITE BEHIND TO AVOID CODE REDUNDENCE
                     jsonResponse = JsonErrorBuilder.getJsonObject(500, "Setup not updated");
                     response.setStatus(jsonResponse.get("code").getAsInt());
                     //response.getWriter().write(jsonResponse.toString());
