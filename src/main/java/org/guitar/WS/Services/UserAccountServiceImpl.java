@@ -68,7 +68,7 @@ public class UserAccountServiceImpl implements IUserAccountService {
 					String GivenName = user.getUserName();
 					String Surname = user.getUserName();
 					String Email = "jrocket@example.com";
-					String Role = "Project Administrator";
+					String Role = Integer.toString(user.getIdRoleUser());
 					
 					String jwt = JWTUtils.createJWT(
 							//Standard JWT Claims
