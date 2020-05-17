@@ -3,8 +3,6 @@ package org.guitar.DAO;
 import org.guitar.DAO.Beans.Setup;
 
 import java.sql.*;
-import java.util.LinkedList;
-import java.util.List;
 
 public class SetupDAOImpl implements ISetupDAO {
 

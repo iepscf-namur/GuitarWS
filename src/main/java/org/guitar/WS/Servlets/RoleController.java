@@ -1,13 +1,10 @@
 package org.guitar.WS.Servlets;
 
-import org.guitar.DAO.DAOFactory;
-import org.guitar.DAO.Utils.GetPropertyValues;
 import org.guitar.WS.Errors.JsonErrorBuilder;
 import org.guitar.WS.Utils.ServletUtils;
 import org.guitar.WS.Services.RoleServiceImpl;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import javax.servlet.ServletException;
@@ -17,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class RoleController extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

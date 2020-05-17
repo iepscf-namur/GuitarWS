@@ -1,14 +1,11 @@
 package org.guitar.WS.Servlets;
 
-import org.guitar.DAO.DAOFactory;
-import org.guitar.DAO.Utils.GetPropertyValues;
 import org.guitar.WS.Errors.JsonErrorBuilder;
 import org.guitar.WS.Utils.ServletUtils;
 import org.guitar.WS.Services.CatalogServiceImpl;
 import org.guitar.WS.Services.SongServiceImpl;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import javax.servlet.ServletException;
@@ -19,7 +16,9 @@ import java.io.IOException;
 
 public class SongController extends HttpServlet {
 
-    @Override
+	private static final long serialVersionUID = 1L;
+
+	@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     	// We need to set Response Header's Content-Type and CharacterEncoding before sending it to the client

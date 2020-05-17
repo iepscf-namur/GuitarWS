@@ -1,9 +1,5 @@
 package org.guitar.WS.Services;
 
-import java.util.List;
-
-import org.guitar.DAO.Beans.Song;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 

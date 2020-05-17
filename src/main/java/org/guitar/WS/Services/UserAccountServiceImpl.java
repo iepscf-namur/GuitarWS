@@ -10,7 +10,6 @@ import org.guitar.WS.Errors.JsonErrorBuilder;
 
 import com.google.gson.JsonObject;
 
-import java.util.Base64;
 import java.io.IOException;
 
 public class UserAccountServiceImpl implements IUserAccountService {
@@ -62,7 +61,7 @@ public class UserAccountServiceImpl implements IUserAccountService {
 					String jwtIssuer = "GUITAR WS";
 					String jwtSubject = user.getUserName();
 					String jwtAudience = "GUITAR CLIENT";
-					int jwtTimeToLive = 800000;
+					int jwtTimeToLive = 7200000;
 					
 					// Additional Claims
 					String GivenName = user.getUserName();

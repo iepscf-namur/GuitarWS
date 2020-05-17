@@ -6,12 +6,8 @@ import org.guitar.DAO.ISetupDAO;
 import org.guitar.DAO.Utils.GetPropertyValues;
 import org.guitar.WS.Errors.JsonErrorBuilder;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import java.io.IOException;
-import java.util.List;
 
 public class SetupServiceImpl implements ISetupServices {
 

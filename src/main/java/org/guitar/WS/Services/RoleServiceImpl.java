@@ -4,10 +4,8 @@ import org.guitar.DAO.Beans.Role;
 import org.guitar.DAO.DAOFactory;
 import org.guitar.DAO.IRoleDAO;
 import org.guitar.DAO.Utils.GetPropertyValues;
-import org.guitar.WS.Errors.JsonErrorBuilder;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;

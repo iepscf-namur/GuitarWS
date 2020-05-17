@@ -2,8 +2,6 @@ package org.guitar.DAO;
 
 import org.guitar.DAO.Beans.Setup;
 
-import java.util.List;
-
 public interface ISetupDAO {
 
     Setup AddSetup(Setup setup);
